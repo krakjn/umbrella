@@ -1,0 +1,7 @@
+.git
+dist
+**/dist
+cli/target
+lib/build
+api/gen
+**/*.deb

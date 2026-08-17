@@ -63,3 +63,33 @@ You are still maturing. APIs move. Modules still couple. You want independent ar
 ## When you don't
 
 You are already mature and APIs are stable. You do not need this. Poly-repo (or a boring mono with no packaging theater) is fine.
+
+## Layout
+
+| dir | toolchain | artifact |
+| --- | --- | --- |
+| `api/` | Python generator | `umbrella-api.deb` — `schema.json` + `schema.h` |
+| `cli/` | Rust | `umbrella-cli.deb` — `/usr/bin/umbrella` |
+| `lib/` | C / CMake | `umbrella-lib.deb` — `libumbrella.so` |
+| `net/` | Go | `umbrella-net.deb` — static `index.html` |
+| `.` | calver meta | `umbrella.deb` — Depends on the four |
+
+Modules are **semver**. The product meta-package is **calver**. Each module has its own `bump.toml` and `pkg/create.sh`.
+
+## Build
+
+Needs `just`, `bump`, `dpkg-deb`, and the module toolchains (Python 3, Rust, CMake/cc, Go).
+
+```sh
+just              # list recipes
+just pack         # all four modules + meta-package → dist/
+just api          # one module
+just gen          # schema only
+just versions
+just patch api    # bump patch api/bump.toml
+just calendar     # bump product calver
+just clean
+just run          # docker env: `umbrella` + http://localhost:3333
+```
+
+`just run` builds the image (all toolchains, packs debs, installs them) and drops you in a shell. The static site from `umbrella-net` is served on port 3333; override with `PORT=8080 just run`.
