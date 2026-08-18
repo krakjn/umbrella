@@ -31,6 +31,8 @@ jobs:
           bump patch --if-changed-from "$BASE" net/bump.toml
           bump calendar
           git add -u
+          git config user.name "umbrella-ci"
+          git config user.email "umbrella-ci@umbrella.corp"
           git commit -m "chore: bump to $(bump print)"
           bump tag
           git -P tag -l
