@@ -33,11 +33,11 @@ net:
 
 # print product + module versions
 versions:
-    @printf "umbrella  %s\n" "$(bump print --only-base bump.toml)"
-    @printf "api       %s\n" "$(bump print --only-base api/bump.toml)"
-    @printf "cli       %s\n" "$(bump print --only-base cli/bump.toml)"
-    @printf "lib       %s\n" "$(bump print --only-base lib/bump.toml)"
-    @printf "net       %s\n" "$(bump print --only-base net/bump.toml)"
+    @printf "umbrella  %s\n" "$(bump print bump.toml)"
+    @printf "api       %s\n" "$(bump print api/bump.toml)"
+    @printf "cli       %s\n" "$(bump print cli/bump.toml)"
+    @printf "lib       %s\n" "$(bump print lib/bump.toml)"
+    @printf "net       %s\n" "$(bump print net/bump.toml)"
 
 # semver bump a module: just patch api
 patch name:

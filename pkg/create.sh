@@ -19,11 +19,11 @@ command -v dpkg-deb >/dev/null || {
 "$ROOT/lib/pkg/create.sh"
 "$ROOT/net/pkg/create.sh"
 
-API_VER=$(bump print --only-base "$ROOT/api/bump.toml")
-CLI_VER=$(bump print --only-base "$ROOT/cli/bump.toml")
-LIB_VER=$(bump print --only-base "$ROOT/lib/bump.toml")
-NET_VER=$(bump print --only-base "$ROOT/net/bump.toml")
-VERSION=$(bump print --only-base "$ROOT/bump.toml")
+API_VER=$(bump print "$ROOT/api/bump.toml")
+CLI_VER=$(bump print "$ROOT/cli/bump.toml")
+LIB_VER=$(bump print "$ROOT/lib/bump.toml")
+NET_VER=$(bump print "$ROOT/net/bump.toml")
+VERSION=$(bump print "$ROOT/bump.toml")
 
 STAGE=$(mktemp -d)
 trap 'rm -rf "$STAGE"' EXIT

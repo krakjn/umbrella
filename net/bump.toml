@@ -5,7 +5,7 @@
 #
 # https://github.com/krakjn/bump
 
-prefix = "v"
+prefix = ""
 
 # NOTE: some fields are modified by bump
 #   - mode: "semver" or "calver"
