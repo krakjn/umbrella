@@ -9,14 +9,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: krakjn/bump@v8
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: "1.23"
+      
+      - name: delta-bump
+        # if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: |
+          bump patch --if-changed-from main api/bump.toml
+          bump patch --if-changed-from main cli/bump.toml
+          bump patch --if-changed-from main lib/bump.toml
+          bump patch --if-changed-from main net/bump.toml
+          bump patch --if-changed-from main
+          git add -u
+          git commit -m "chore: bump to $(bump print)"
+          bump tag
+          git -P tag -l
+          git -P log --oneline --decorate -n 20
 
       - name: pack
         run: ./pkg/create.sh
