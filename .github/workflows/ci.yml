@@ -21,13 +21,15 @@ jobs:
           go-version: "1.23"
       
       - name: delta-bump
-        # if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        # if: github.event_name == 'pull_request' && github.base_ref == github.default_branch
         run: |
-          bump patch --if-changed-from main api/bump.toml
-          bump patch --if-changed-from main cli/bump.toml
-          bump patch --if-changed-from main lib/bump.toml
-          bump patch --if-changed-from main net/bump.toml
-          bump patch --if-changed-from main
+          # PR checkout is detached; fetch-depth: 0 has origin/main, not local main.
+          BASE=origin/${{ github.base_ref }}
+          bump patch --if-changed-from "$BASE" api/bump.toml
+          bump patch --if-changed-from "$BASE" cli/bump.toml
+          bump patch --if-changed-from "$BASE" lib/bump.toml
+          bump patch --if-changed-from "$BASE" net/bump.toml
+          bump patch --if-changed-from "$BASE"
           git add -u
           git commit -m "chore: bump to $(bump print)"
           bump tag
