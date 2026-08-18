@@ -29,7 +29,7 @@ jobs:
           bump patch --if-changed-from "$BASE" cli/bump.toml
           bump patch --if-changed-from "$BASE" lib/bump.toml
           bump patch --if-changed-from "$BASE" net/bump.toml
-          bump patch --if-changed-from "$BASE"
+          bump calendar
           git add -u
           git commit -m "chore: bump to $(bump print)"
           bump tag
