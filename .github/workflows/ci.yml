@@ -21,10 +21,11 @@ jobs:
           go-version: "1.23"
       
       - name: delta-bump
-        # if: github.event_name == 'pull_request' && github.base_ref == github.default_branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == github.event.repository.default_branch
+        env:
+          BASE: origin/${{ github.event.pull_request.base.ref }}
         run: |
-          # PR checkout is detached; fetch-depth: 0 has origin/main, not local main.
-          BASE=origin/${{ github.base_ref }}
+          # github.base_ref is empty on push; use pull_request.base.ref on PRs only.
           bump patch --if-changed-from "$BASE" api/bump.toml
           bump patch --if-changed-from "$BASE" cli/bump.toml
           bump patch --if-changed-from "$BASE" lib/bump.toml
