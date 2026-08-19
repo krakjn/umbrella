@@ -1,7 +1,5 @@
 use serde::Deserialize;
 
-/// CLI to drive json
-
 #[derive(Debug, Deserialize)]
 struct Schema {
     greeting: String,
