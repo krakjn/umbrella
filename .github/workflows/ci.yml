@@ -2,19 +2,28 @@ name: CI
 
 on:
   push:
+    branches: [main]
+    tags: ["*"]
   pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: krakjn/bump@v8
 
       - uses: dtolnay/rust-toolchain@stable
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: "1.23"
 
@@ -25,3 +34,44 @@ jobs:
         with:
           name: debs
           path: dist/*.deb
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
+        with:
+          title: Release umbrella-${{ github.ref_name }}
+          generate-release-notes: true
+          files: |
+            dist/*.deb
+
+  delta-bump:
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.action == 'closed'
+      && github.event.pull_request.merged == true
+      && github.event.pull_request.base.ref == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: krakjn/bump@v8
+
+      - name: delta-bump
+        env:
+          # main tip before merge; diff to HEAD is what the PR landed
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          bump patch --if-changed-from "$BASE" api/bump.toml
+          bump patch --if-changed-from "$BASE" cli/bump.toml
+          bump patch --if-changed-from "$BASE" lib/bump.toml
+          bump patch --if-changed-from "$BASE" net/bump.toml
+          bump calendar
+          git add -u
+          git config user.name "umbrella-ci"
+          git config user.email "umbrella-ci@umbrella.corp"
+          git commit -m "chore: bump to $(bump print)"
+          bump tag
+          git push origin main --follow-tags
