@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches: [ "main" ]
+    tags: [ "*" ]
   pull_request:
 
 jobs:
@@ -46,3 +48,12 @@ jobs:
         with:
           name: debs
           path: dist/*.deb
+      
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
+        with:
+          title: Release umbrella-${{ github.ref_name }}
+          generate-release-notes: true
+          files: |
+            dist/*.deb
