@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+// command line interface
+
 #[derive(Debug, Deserialize)]
 struct Schema {
     greeting: String,

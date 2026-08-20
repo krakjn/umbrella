@@ -3,8 +3,7 @@ set shell := ["sh", "-cu"]
 port := env("PORT", "3333")
 image_name := "umbrella"
 
-# list recipes
-default:
+_:
     @just --list
 
 # generate api schema.json + schema.h
@@ -39,27 +38,12 @@ versions:
     @printf "lib       %s\n" "$(bump print lib/bump.toml)"
     @printf "net       %s\n" "$(bump print net/bump.toml)"
 
-# semver bump a module: just patch api
-patch name:
-    bump patch {{name}}/bump.toml
-
-minor name:
-    bump minor {{name}}/bump.toml
-
-major name:
-    bump major {{name}}/bump.toml
-
-# product calver
-calendar:
-    bump calendar bump.toml
-
 # build the env image (toolchains + installed debs)
 image:
     docker build -t {{image_name}} .
 
 # shell in the env; `umbrella` is the cli, site is http://localhost:{{port}}
-run:
-    docker build -t {{image_name}} .
+run: image
     docker run --rm -it -e HOST_PORT={{port}} -p {{port}}:3333 {{image_name}}
 
 # remove generated files and debs
