@@ -83,13 +83,7 @@ Needs `just`, `bump`, `dpkg-deb`, and the module toolchains (Python 3, Rust, CMa
 ```sh
 just              # list recipes
 just pack         # all four modules + meta-package → dist/
-just api          # one module
-just gen          # schema only
-just versions
-just patch api    # bump patch api/bump.toml
-just calendar     # bump product calver
-just clean
-just run          # docker env: `umbrella` + http://localhost:3333
+just versions     # list all versions of modules
 ```
 
 `just run` builds the image (all toolchains, packs debs, installs them) and drops you in a shell. The static site from `umbrella-net` is served on port 3333; override with `PORT=8080 just run`.
